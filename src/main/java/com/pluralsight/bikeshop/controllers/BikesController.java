@@ -1,5 +1,6 @@
 package com.pluralsight.bikeshop.controllers;
 
+import com.pluralsight.bikeshop.repositories.BikeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,23 +16,23 @@ import com.pluralsight.bikeshop.models.Bike;
 //annotation for request path
 @RequestMapping("/api/v1/bikes")
 public class BikesController {
-    //annotation for get method
+   @Autowired
+   private BikeRepository bikeRepository;
 
+    //annotation for get method
     @GetMapping
     public List<Bike>list(){
-        List<Bike> bikes = new ArrayList<>();
-        bikes.add(new Bike());
-        return bikes;
+        return bikeRepository.findAll();
     }
+
     @PostMapping
-    @ResponseStatus(HttpStatus.OK) //changing hhtp response to 201
-    public Map<String,String> create(@RequestBody Bike bike){
-        Map response = new HashMap<String,String>();
-        response.put("status","success");
-        return response;
+    @ResponseStatus(HttpStatus.OK)
+    public void create(@RequestBody Bike bike){
+        bikeRepository.save(bike);
+
     }
     @GetMapping("/{id}")  //adding on to the get path
-    public void create(@PathVariable("id") long id){
-
+    public Bike get(@PathVariable("id") long id){
+        return bikeRepository.getOne(id);
     }
 }
